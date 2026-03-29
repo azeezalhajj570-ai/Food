@@ -1,6 +1,26 @@
-<footer class="border-t border-white/70 bg-white/70">
-  <div class="mx-auto flex w-full max-w-6xl flex-col gap-3 px-4 py-8 text-sm text-slate-500 sm:px-6 lg:px-8 md:flex-row md:items-center md:justify-between">
-    <p>Smart Online Food Ordering and Restaurant Management System</p>
-    <p>Built with Flask, SQLite, and a shared component structure.</p>
+<footer class="mt-16 border-t border-stone-200 bg-white">
+  <div class="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1.2fr_0.8fr_0.8fr] lg:px-8">
+    <div>
+      <p class="font-display text-xl font-bold text-slate-900">Smart Online Food Ordering and Restaurant Management System</p>
+      <p class="mt-4 max-w-xl text-sm leading-7 text-slate-600">
+        A web-based system for online food ordering, order tracking, payment handling, and restaurant management.
+      </p>
+    </div>
+    <div>
+      <p class="text-sm font-bold uppercase tracking-[0.24em] text-stone-500">Customer</p>
+      <div class="mt-4 space-y-3 text-sm text-slate-600">
+        <a href="{{ url_for('main.menu') }}" class="block transition hover:text-brand-dark">Browse Menu</a>
+        <a href="{{ url_for('main.cart') }}" class="block transition hover:text-brand-dark">Shopping Cart</a>
+        <a href="{{ url_for('main.checkout') }}" class="block transition hover:text-brand-dark">Checkout</a>
+      </div>
+    </div>
+    <div>
+      <p class="text-sm font-bold uppercase tracking-[0.24em] text-stone-500">Management</p>
+      <div class="mt-4 space-y-3 text-sm text-slate-600">
+        <p>Menu management</p>
+        <p>Order management</p>
+        <p>Sales reporting</p>
+      </div>
+    </div>
   </div>
 </footer>

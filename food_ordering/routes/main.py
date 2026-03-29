@@ -1,13 +1,15 @@
 from functools import wraps
 
-from flask import Blueprint, flash, redirect, render_template, request, session, url_for
+from flask import Blueprint, current_app, flash, redirect, render_template, request, session, url_for
 from flask_login import current_user, login_required
 from sqlalchemy import or_
 
 from food_ordering import db
 from food_ordering.models import Category, MenuItem, Order, OrderItem
 from food_ordering.services.cart import add_to_cart, clear_cart, get_cart_summary, update_cart_item
+from food_ordering.services.recommendations import get_personalized_recommendations
 from food_ordering.services.reports import get_dashboard_metrics, get_status_breakdown, get_top_selling_items
+from food_ordering.services.settings import get_ai_settings, set_setting
 
 main_bp = Blueprint("main", __name__)
 
@@ -38,6 +40,7 @@ def index():
     featured_items = MenuItem.query.filter_by(is_available=True).order_by(MenuItem.created_at.desc()).limit(6).all()
     categories = Category.query.order_by(Category.name.asc()).all()
     user_orders = []
+    ai_recommendations = get_personalized_recommendations(limit=3, user=current_user)
 
     if current_user.is_authenticated:
         user_orders = (
@@ -52,6 +55,7 @@ def index():
         featured_items=featured_items,
         categories=categories,
         user_orders=user_orders,
+        ai_recommendations=ai_recommendations,
     )
 
 
@@ -85,7 +89,8 @@ def menu():
 @main_bp.route("/menu/<int:item_id>")
 def menu_item_detail(item_id):
     item = MenuItem.query.get_or_404(item_id)
-    return render_template("item_detail.html", item=item)
+    ai_recommendations = get_personalized_recommendations(limit=3, current_item=item, user=current_user)
+    return render_template("item_detail.html", item=item, ai_recommendations=ai_recommendations)
 
 
 @main_bp.route("/cart/add/<int:item_id>", methods=["POST"])
@@ -120,7 +125,14 @@ def cart():
         flash("Cart updated.", "info")
         return redirect(url_for("main.cart"))
 
-    return render_template("cart.html", cart=get_cart_summary(session))
+    cart_summary = get_cart_summary(session)
+    anchor_item_ids = [row["item"].id for row in cart_summary["items"]]
+    ai_recommendations = get_personalized_recommendations(
+        limit=3,
+        user=current_user,
+        anchor_item_ids=anchor_item_ids,
+    )
+    return render_template("cart.html", cart=cart_summary, ai_recommendations=ai_recommendations)
 
 
 @main_bp.route("/checkout", methods=["GET", "POST"])
@@ -198,6 +210,29 @@ def admin_dashboard():
         top_items=get_top_selling_items(),
         recent_orders=recent_orders,
     )
+
+
+@main_bp.route("/admin/settings", methods=["GET", "POST"])
+@admin_required
+def admin_settings():
+    if request.method == "POST":
+        gemini_api_key = request.form.get("gemini_api_key", "").strip()
+        gemini_model = request.form.get("gemini_model", "").strip() or "gemini-2.5-flash"
+        recommendation_prompt = request.form.get("recommendation_prompt", "").strip()
+
+        set_setting("gemini_api_key", gemini_api_key)
+        set_setting("gemini_model", gemini_model)
+        set_setting("recommendation_prompt", recommendation_prompt)
+        db.session.commit()
+
+        flash("AI settings updated.", "success")
+        return redirect(url_for("main.admin_settings"))
+
+    settings = get_ai_settings(current_app.config)
+    masked_key = ""
+    if settings["gemini_api_key"]:
+        masked_key = f"{settings['gemini_api_key'][:4]}{'*' * max(len(settings['gemini_api_key']) - 8, 4)}{settings['gemini_api_key'][-4:]}"
+    return render_template("admin_settings.html", settings=settings, masked_key=masked_key)
 
 
 @main_bp.route("/admin/menu", methods=["GET", "POST"])

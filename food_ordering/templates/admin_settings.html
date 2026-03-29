@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Admin AI Settings | Food System{% endblock %}
+{% block content %}
+<section class="mx-auto max-w-7xl px-4 pb-12 pt-8 sm:px-6 lg:px-8">
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+      <p class="text-sm font-bold uppercase tracking-[0.24em] text-brand-dark">AI settings</p>
+      <h1 class="mt-2 font-display text-4xl font-bold text-slate-950">Configure Gemini integration and recommendation prompt</h1>
+    </div>
+    <a href="{{ url_for('main.admin_dashboard') }}" class="text-sm font-bold text-brand-dark transition hover:text-brand">Back to dashboard</a>
+  </div>
+
+  <div class="mt-8 grid gap-8 xl:grid-cols-[0.9fr_1.1fr]">
+    <div class="space-y-6">
+      <div class="rounded-[2rem] border border-stone-200 bg-white p-6 shadow-panel sm:p-8">
+        <p class="text-sm font-bold uppercase tracking-[0.24em] text-stone-500">Current status</p>
+        <div class="mt-6 space-y-4">
+          <div class="rounded-2xl bg-stone-50 p-4">
+            <p class="text-sm text-slate-500">Gemini API Key</p>
+            <p class="mt-1 text-sm font-semibold text-slate-900">{{ masked_key or "Not configured" }}</p>
+          </div>
+          <div class="rounded-2xl bg-stone-50 p-4">
+            <p class="text-sm text-slate-500">Model</p>
+            <p class="mt-1 text-sm font-semibold text-slate-900">{{ settings["gemini_model"] }}</p>
+          </div>
+          <div class="rounded-2xl bg-stone-50 p-4">
+            <p class="text-sm text-slate-500">Prompt usage</p>
+            <p class="mt-1 text-sm font-semibold text-slate-900">Used to guide recommendation ranking output</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="rounded-[2rem] border border-stone-200 bg-white p-6 shadow-panel">
+        <p class="text-sm font-bold uppercase tracking-[0.24em] text-stone-500">Notes</p>
+        <p class="mt-4 text-sm leading-7 text-slate-600">
+          Leave the API key blank to disable Gemini and use the local recommendation engine only. The stored prompt is combined with the system JSON format rules automatically.
+        </p>
+      </div>
+    </div>
+
+    <div class="rounded-[2rem] border border-stone-200 bg-white p-6 shadow-panel sm:p-8">
+      <form method="post" class="space-y-6">
+        <div>
+          <label for="gemini_api_key" class="mb-2 block text-sm font-semibold text-slate-700">Gemini API Key</label>
+          <input id="gemini_api_key" type="password" name="gemini_api_key" value="{{ settings['gemini_api_key'] }}" class="w-full rounded-2xl border-stone-200 bg-stone-50 px-4 py-3 text-slate-800 focus:border-brand focus:ring-brand">
+        </div>
+
+        <div>
+          <label for="gemini_model" class="mb-2 block text-sm font-semibold text-slate-700">Gemini Model</label>
+          <input id="gemini_model" type="text" name="gemini_model" value="{{ settings['gemini_model'] }}" class="w-full rounded-2xl border-stone-200 bg-stone-50 px-4 py-3 text-slate-800 focus:border-brand focus:ring-brand">
+        </div>
+
+        <div>
+          <label for="recommendation_prompt" class="mb-2 block text-sm font-semibold text-slate-700">Recommendation Prompt</label>
+          <textarea id="recommendation_prompt" name="recommendation_prompt" rows="10" class="w-full rounded-2xl border-stone-200 bg-stone-50 px-4 py-3 text-slate-800 focus:border-brand focus:ring-brand">{{ settings["recommendation_prompt"] }}</textarea>
+        </div>
+
+        <button type="submit" class="rounded-2xl bg-brand px-6 py-3.5 text-sm font-bold text-white transition hover:bg-brand-dark">
+          Save AI Settings
+        </button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

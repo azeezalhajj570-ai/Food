@@ -1,0 +1,16 @@
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #f7f5f1;
+}
+
+::selection {
+  background: rgba(180, 83, 9, 0.16);
+  color: #1f2937;
+}

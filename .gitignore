@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+food_ordering/__pycache__/
+food_ordering/routes/__pycache__/
+food_ordering/services/__pycache__/
+instance/

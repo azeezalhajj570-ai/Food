@@ -1,9 +1,12 @@
 {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
-    <div class="mx-auto flex w-full max-w-6xl flex-col gap-3 px-4 pt-4 sm:px-6 lg:px-8">
+    <div class="mx-auto mt-5 flex w-full max-w-7xl flex-col gap-3 px-4 sm:px-6 lg:px-8">
       {% for category, message in messages %}
-        <div class="flash-toast rounded-2xl border border-white/60 px-4 py-3 text-sm shadow-sm
-          {% if category == 'success' %}bg-emerald-50 text-emerald-800{% elif category == 'danger' %}bg-rose-50 text-rose-800{% elif category == 'warning' %}bg-amber-50 text-amber-800{% else %}bg-slate-100 text-slate-800{% endif %}">
+        <div class="rounded-2xl border px-4 py-3 text-sm shadow-panel
+          {% if category == 'success' %}border-emerald-200 bg-emerald-50 text-emerald-800
+          {% elif category == 'danger' %}border-rose-200 bg-rose-50 text-rose-800
+          {% elif category == 'warning' %}border-amber-200 bg-amber-50 text-amber-800
+          {% else %}border-slate-200 bg-white text-slate-700{% endif %}">
           {{ message }}
         </div>
       {% endfor %}

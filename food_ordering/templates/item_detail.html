@@ -1,33 +1,103 @@
 {% extends "base.html" %}
 {% block title %}{{ item.name }} | Food System{% endblock %}
 {% block content %}
-<section class="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
-  <div class="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-    <div class="rounded-[2rem] border border-white/70 bg-white/85 p-3 shadow-xl shadow-orange-100">
-      <div class="h-[420px] rounded-[1.5rem] bg-cover bg-center" style="background-image: linear-gradient(135deg, rgba(15, 23, 42, 0.18), rgba(234, 88, 12, 0.24)), url('{{ item.image_url or "https://images.unsplash.com/photo-1546069901-ba9599a7e63c" }}');"></div>
-    </div>
-    <div class="rounded-[2rem] border border-white/70 bg-white/90 p-8 shadow-xl shadow-orange-100">
-      <p class="text-sm font-semibold uppercase tracking-[0.3em] text-[var(--brand)]">{{ item.category.name }}</p>
-      <h1 class="mt-3 text-4xl font-black text-slate-900">{{ item.name }}</h1>
-      <p class="mt-5 text-base leading-8 text-slate-600">{{ item.description }}</p>
-      <div class="mt-8 grid gap-4 sm:grid-cols-2">
-        <div class="rounded-3xl bg-orange-50 p-5">
-          <p class="text-sm text-slate-500">Price</p>
-          <p class="mt-2 text-2xl font-bold text-[var(--brand)]">SAR {{ "%.2f"|format(item.price) }}</p>
-        </div>
-        <div class="rounded-3xl bg-slate-100 p-5">
-          <p class="text-sm text-slate-500">Preparation time</p>
-          <p class="mt-2 text-2xl font-bold text-slate-900">{{ item.prep_time }} min</p>
+<!-- Product details page -->
+<section class="mx-auto max-w-7xl px-4 pb-12 pt-8 sm:px-6 lg:px-8">
+  <div class="grid gap-8 lg:grid-cols-[1.05fr_0.95fr]">
+    <div class="rounded-[2rem] border border-orange-100 bg-white p-4 shadow-soft sm:p-5">
+      <div class="relative h-[320px] overflow-hidden rounded-[1.75rem] sm:h-[460px]">
+        <div class="absolute inset-0 bg-cover bg-center" style="background-image: linear-gradient(180deg, rgba(15, 23, 42, 0.08), rgba(15, 23, 42, 0.35)), url('{{ item.image_url or "https://images.unsplash.com/photo-1546069901-ba9599a7e63c" }}');"></div>
+        <div class="absolute left-5 top-5 rounded-full bg-white/90 px-4 py-2 text-xs font-bold uppercase tracking-[0.24em] text-brand-dark">
+          {{ item.category.name }}
         </div>
       </div>
-      <form action="{{ url_for('main.cart_add', item_id=item.id) }}" method="post" class="mt-8 space-y-4">
+    </div>
+
+    <div class="rounded-[2rem] border border-orange-100 bg-white p-6 shadow-panel sm:p-8">
+      <p class="text-sm font-bold uppercase tracking-[0.24em] text-brand-dark">Meal details</p>
+      <h1 class="mt-3 font-display text-4xl font-bold text-slate-950">{{ item.name }}</h1>
+      <p class="mt-5 text-base leading-8 text-slate-600">{{ item.description }}</p>
+
+      <div class="mt-8 grid gap-4 sm:grid-cols-3">
+        <div class="rounded-3xl bg-orange-50 p-5">
+          <p class="text-sm text-slate-500">Price</p>
+          <p class="mt-2 text-2xl font-bold text-brand-dark">SAR {{ "%.2f"|format(item.price) }}</p>
+        </div>
+        <div class="rounded-3xl bg-amber-50 p-5">
+          <p class="text-sm text-slate-500">Prep Time</p>
+          <p class="mt-2 text-2xl font-bold text-slate-900">{{ item.prep_time }} min</p>
+        </div>
+        <div class="rounded-3xl bg-slate-50 p-5">
+          <p class="text-sm text-slate-500">Status</p>
+          <p class="mt-2 text-xl font-bold {% if item.is_available %}text-emerald-600{% else %}text-rose-600{% endif %}">
+            {% if item.is_available %}Available{% else %}Unavailable{% endif %}
+          </p>
+        </div>
+      </div>
+
+      <div class="mt-8 rounded-[1.75rem] border border-orange-100 bg-surface p-6">
+        <div class="grid gap-4 sm:grid-cols-3">
+          <div class="rounded-2xl bg-white p-4">
+            <p class="text-sm font-semibold text-slate-900">Balanced layout</p>
+            <p class="mt-2 text-sm text-slate-600">Large image, clear pricing, and focused CTA improve product confidence.</p>
+          </div>
+          <div class="rounded-2xl bg-white p-4">
+            <p class="text-sm font-semibold text-slate-900">Fast decision making</p>
+            <p class="mt-2 text-sm text-slate-600">Preparation time and availability are visible before the cart action.</p>
+          </div>
+          <div class="rounded-2xl bg-white p-4">
+            <p class="text-sm font-semibold text-slate-900">Mobile ready</p>
+            <p class="mt-2 text-sm text-slate-600">The layout collapses cleanly for handheld ordering.</p>
+          </div>
+        </div>
+      </div>
+
+      <form action="{{ url_for('main.cart_add', item_id=item.id) }}" method="post" class="mt-8 space-y-5">
         <div>
           <label for="quantity" class="mb-2 block text-sm font-semibold text-slate-700">Quantity</label>
-          <input id="quantity" type="number" name="quantity" value="1" min="1" class="w-32 rounded-2xl border-slate-200">
+          <input id="quantity" type="number" name="quantity" value="1" min="1" class="w-32 rounded-2xl border-orange-100 bg-orange-50/40 px-4 py-3 text-slate-800 focus:border-brand focus:ring-brand">
         </div>
-        <button type="submit" class="rounded-2xl bg-[var(--brand)] px-6 py-3 text-sm font-semibold text-white">Add to Cart</button>
+        <div class="flex flex-col gap-3 sm:flex-row">
+          <button type="submit" class="inline-flex items-center justify-center rounded-2xl bg-brand px-6 py-3.5 text-sm font-bold text-white transition hover:bg-brand-dark" {% if not item.is_available %}disabled{% endif %}>
+            Add to Cart
+          </button>
+          <a href="{{ url_for('main.menu') }}" class="inline-flex items-center justify-center rounded-2xl border border-orange-100 px-6 py-3.5 text-sm font-bold text-slate-800 transition hover:border-orange-200 hover:bg-orange-50">
+            Back to Menu
+          </a>
+        </div>
       </form>
     </div>
   </div>
 </section>
+
+{% if ai_recommendations["items"] %}
+  <section class="mx-auto max-w-7xl px-4 pb-12 sm:px-6 lg:px-8">
+    <div class="rounded-[2rem] border border-stone-200 bg-white p-6 shadow-panel sm:p-8">
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p class="text-sm font-bold uppercase tracking-[0.24em] text-stone-500">You may like</p>
+          <h2 class="mt-2 font-display text-3xl font-bold text-slate-950">Related recommendations</h2>
+          <p class="mt-3 max-w-2xl text-sm leading-7 text-slate-600">{{ ai_recommendations["reason"] }}</p>
+        </div>
+        <span class="rounded-full bg-stone-100 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-slate-600">
+          {{ ai_recommendations["source"] }}
+        </span>
+      </div>
+
+      <div class="mt-8 grid gap-4 md:grid-cols-3">
+        {% for suggested_item in ai_recommendations["items"] %}
+          <article class="rounded-[1.5rem] border border-stone-200 bg-stone-50 p-5">
+            <p class="text-xs font-bold uppercase tracking-[0.2em] text-stone-500">{{ suggested_item.category.name }}</p>
+            <h3 class="mt-2 text-xl font-bold text-slate-900">{{ suggested_item.name }}</h3>
+            <p class="mt-2 text-sm leading-7 text-slate-600">{{ suggested_item.description }}</p>
+            <div class="mt-4 flex items-center justify-between">
+              <span class="text-sm font-bold text-brand-dark">SAR {{ "%.2f"|format(suggested_item.price) }}</span>
+              <a href="{{ url_for('main.menu_item_detail', item_id=suggested_item.id) }}" class="text-sm font-bold text-brand-dark">View</a>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+{% endif %}
 {% endblock %}

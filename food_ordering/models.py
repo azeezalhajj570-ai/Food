@@ -76,3 +76,10 @@ class OrderItem(db.Model):
     quantity = db.Column(db.Integer, nullable=False, default=1)
     unit_price = db.Column(db.Float, nullable=False)
     line_total = db.Column(db.Float, nullable=False)
+
+
+class AppSetting(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    key = db.Column(db.String(120), unique=True, nullable=False)
+    value = db.Column(db.Text, nullable=True)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)

@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, session
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 
@@ -24,6 +24,12 @@ def create_app(config_class=Config):
     app.register_blueprint(auth_bp)
     app.register_blueprint(main_bp)
     app.register_blueprint(api_bp, url_prefix="/api")
+
+    @app.context_processor
+    def inject_shared_template_state():
+        from food_ordering.services.cart import get_cart_summary
+
+        return {"cart_summary": get_cart_summary(session)}
 
     with app.app_context():
         db.create_all()

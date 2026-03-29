@@ -7,26 +7,37 @@
     <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script>
       tailwind.config = {
         theme: {
           extend: {
             colors: {
-              primary: "#ea580c",
-              shell: "#fff8f1",
+              brand: {
+                DEFAULT: "#b45309",
+                dark: "#92400e",
+                soft: "#f8efe3",
+              },
+              accent: "#d97706",
+              surface: "#f7f5f1",
               ink: "#1f2937",
+              muted: "#6b7280",
             },
             fontFamily: {
-              display: ["Public Sans", "sans-serif"],
+              display: ["Outfit", "sans-serif"],
+              body: ["Source Sans 3", "sans-serif"],
+            },
+            boxShadow: {
+              soft: "0 18px 40px -28px rgba(31, 41, 55, 0.18)",
+              panel: "0 12px 30px -22px rgba(31, 41, 55, 0.16)",
             },
           },
         },
       };
     </script>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css', v='20260324a') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css', v='20260329a') }}">
   </head>
-  <body class="min-h-screen bg-[var(--shell)] font-display text-slate-900">
+  <body class="min-h-screen bg-surface font-body text-ink antialiased">
     <div class="flex min-h-screen flex-col">
       {% include "components/_topbar.html" %}
       {% include "components/_flashes.html" %}
@@ -35,5 +46,17 @@
       </main>
       {% include "components/_footer.html" %}
     </div>
+
+    <script>
+      const menuButton = document.querySelector("[data-menu-button]");
+      const mobileMenu = document.querySelector("[data-mobile-menu]");
+      if (menuButton && mobileMenu) {
+        menuButton.addEventListener("click", () => {
+          const expanded = menuButton.getAttribute("aria-expanded") === "true";
+          menuButton.setAttribute("aria-expanded", String(!expanded));
+          mobileMenu.classList.toggle("hidden");
+        });
+      }
+    </script>
   </body>
 </html>
