@@ -119,16 +119,20 @@ with app.app_context():
 
     admin = User.query.filter_by(email="admin@foodsystem.local").first()
     if not admin:
-        admin = User(name="Admin User", email="admin@foodsystem.local", role="admin")
+        admin = User(name="Admin User", username="admin", email="admin@foodsystem.local", role="admin")
         admin.set_password("admin123")
         db.session.add(admin)
+    else:
+        admin.username = "admin"
 
     demo_user = User.query.filter_by(email="customer@foodsystem.local").first()
     if not demo_user:
-        demo_user = User(name="Demo Customer", email="customer@foodsystem.local", role="customer")
+        demo_user = User(name="Demo Customer", username="customer", email="customer@foodsystem.local", role="customer")
         demo_user.set_password("customer123")
         db.session.add(demo_user)
+    else:
+        demo_user.username = "customer"
 
     db.session.commit()
     print("Seed completed. Demo admin: admin@foodsystem.local / admin123")
-    print("Demo customer: customer@foodsystem.local / customer123")
+    print("Demo customer: customer@foodsystem.local or customer / customer123")

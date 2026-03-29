@@ -2,6 +2,7 @@ from urllib.parse import urljoin, urlparse
 
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user, logout_user
+from sqlalchemy import or_
 
 from food_ordering import db
 from food_ordering.models import User
@@ -24,18 +25,23 @@ def register():
 
     if request.method == "POST":
         name = request.form.get("name", "").strip()
+        username = request.form.get("username", "").strip().lower()
         email = request.form.get("email", "").strip().lower()
         password = request.form.get("password", "")
 
-        if not name or not email or not password:
+        if not name or not username or not email or not password:
             flash("All fields are required.", "danger")
+            return render_template("register.html")
+
+        if User.query.filter_by(username=username).first():
+            flash("This username is already taken.", "warning")
             return render_template("register.html")
 
         if User.query.filter_by(email=email).first():
             flash("This email is already registered.", "warning")
             return render_template("register.html")
 
-        user = User(name=name, email=email)
+        user = User(name=name, username=username, email=email)
         user.set_password(password)
         db.session.add(user)
         db.session.commit()
@@ -56,9 +62,14 @@ def login():
         return redirect(url_for("main.index"))
 
     if request.method == "POST":
-        email = request.form.get("email", "").strip().lower()
+        login_value = request.form.get("login", "").strip().lower()
         password = request.form.get("password", "")
-        user = User.query.filter_by(email=email).first()
+        user = User.query.filter(
+            or_(
+                User.email == login_value,
+                User.username == login_value,
+            )
+        ).first()
 
         if user and user.check_password(password):
             login_user(user)
@@ -67,7 +78,7 @@ def login():
                 return redirect(next_url)
             return redirect(url_for("main.index"))
 
-        flash("Invalid email or password.", "danger")
+        flash("Invalid email, username, or password.", "danger")
 
     return render_template("login.html")
 
