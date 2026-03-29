@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Checkout | Food System{% endblock %}
+{% block content %}
+<section class="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+  <div class="grid gap-8 lg:grid-cols-[1fr_0.9fr]">
+    <form method="post" class="rounded-[2rem] border border-white/70 bg-white/90 p-6 shadow-xl shadow-orange-100">
+      <h1 class="text-3xl font-black text-slate-900">Checkout</h1>
+      <div class="mt-6 grid gap-5">
+        <div>
+          <label for="delivery_address" class="mb-2 block text-sm font-semibold text-slate-700">Delivery Address</label>
+          <textarea id="delivery_address" name="delivery_address" rows="4" class="w-full rounded-2xl border-slate-200" placeholder="Apartment, street, city"></textarea>
+        </div>
+        <div>
+          <label for="payment_method" class="mb-2 block text-sm font-semibold text-slate-700">Payment Method</label>
+          <select id="payment_method" name="payment_method" class="w-full rounded-2xl border-slate-200">
+            <option value="">Select a payment method</option>
+            {% for method in payment_methods %}
+              <option value="{{ method }}">{{ method }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label for="customer_note" class="mb-2 block text-sm font-semibold text-slate-700">Order Note</label>
+          <textarea id="customer_note" name="customer_note" rows="3" class="w-full rounded-2xl border-slate-200" placeholder="Optional instructions for the restaurant"></textarea>
+        </div>
+        <button type="submit" class="rounded-2xl bg-[var(--brand)] px-6 py-3 text-sm font-semibold text-white">Place Order</button>
+      </div>
+    </form>
+
+    <div class="rounded-[2rem] border border-white/70 bg-slate-900 p-6 text-white shadow-xl shadow-slate-300">
+      <h2 class="text-xl font-bold">Payment Summary</h2>
+      <div class="mt-6 space-y-4">
+        {% for row in cart.items %}
+          <div class="flex items-center justify-between text-sm text-slate-300">
+            <span>{{ row.item.name }} × {{ row.quantity }}</span>
+            <span>SAR {{ "%.2f"|format(row.subtotal) }}</span>
+          </div>
+        {% endfor %}
+        <div class="flex items-center justify-between border-t border-white/10 pt-4 text-lg font-bold text-white">
+          <span>Total</span>
+          <span>SAR {{ "%.2f"|format(cart.total_amount) }}</span>
+        </div>
+      </div>
+      <p class="mt-6 rounded-2xl bg-white/10 p-4 text-sm leading-6 text-slate-200">
+        The online payment step is modeled as a safe academic demo flow. Card and wallet payments are marked as paid immediately, while cash on delivery stays pending until handoff.
+      </p>
+    </div>
+  </div>
+</section>
+{% endblock %}

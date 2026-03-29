@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Cart | Food System{% endblock %}
+{% block content %}
+<section class="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+  <div class="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
+    <div class="rounded-[2rem] border border-white/70 bg-white/90 p-6 shadow-xl shadow-orange-100">
+      <div class="flex items-center justify-between">
+        <h1 class="text-3xl font-black text-slate-900">Shopping Cart</h1>
+        <span class="rounded-full bg-orange-50 px-3 py-1 text-sm font-semibold text-[var(--brand)]">{{ cart.total_quantity }} items</span>
+      </div>
+      <form method="post" class="mt-6 space-y-4">
+        {% for row in cart.items %}
+          <div class="rounded-3xl border border-slate-100 bg-slate-50/70 p-4">
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p class="font-semibold text-slate-900">{{ row.item.name }}</p>
+                <p class="mt-1 text-sm text-slate-500">SAR {{ "%.2f"|format(row.item.price) }} each</p>
+              </div>
+              <div class="flex items-center gap-3">
+                <input type="number" min="0" name="qty_{{ row.item.id }}" value="{{ row.quantity }}" class="w-24 rounded-2xl border-slate-200">
+                <span class="min-w-24 text-right text-sm font-semibold text-slate-900">SAR {{ "%.2f"|format(row.subtotal) }}</span>
+              </div>
+            </div>
+          </div>
+        {% else %}
+          <p class="rounded-3xl border border-dashed border-orange-200 bg-orange-50/60 p-6 text-slate-600">
+            Your cart is empty. Browse the menu to add items.
+          </p>
+        {% endfor %}
+        {% if cart.items %}
+          <button type="submit" class="rounded-2xl border border-orange-200 px-5 py-3 text-sm font-semibold text-slate-800">Update Cart</button>
+        {% endif %}
+      </form>
+    </div>
+    <div class="rounded-[2rem] border border-white/70 bg-slate-900 p-6 text-white shadow-xl shadow-slate-300">
+      <h2 class="text-xl font-bold">Order Summary</h2>
+      <div class="mt-6 space-y-4 text-sm">
+        <div class="flex items-center justify-between text-slate-300">
+          <span>Total Items</span>
+          <span>{{ cart.total_quantity }}</span>
+        </div>
+        <div class="flex items-center justify-between border-t border-white/10 pt-4 text-lg font-bold text-white">
+          <span>Total</span>
+          <span>SAR {{ "%.2f"|format(cart.total_amount) }}</span>
+        </div>
+      </div>
+      <div class="mt-6 flex flex-col gap-3">
+        <a href="{{ url_for('main.menu') }}" class="rounded-2xl border border-white/15 px-5 py-3 text-center text-sm font-semibold text-white">Continue Shopping</a>
+        <a href="{{ url_for('main.checkout') }}" class="rounded-2xl bg-[var(--brand)] px-5 py-3 text-center text-sm font-semibold text-white">Proceed to Checkout</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
