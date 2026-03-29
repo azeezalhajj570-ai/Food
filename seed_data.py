@@ -125,14 +125,19 @@ with app.app_context():
     else:
         admin.username = "admin"
 
-    demo_user = User.query.filter_by(email="customer@foodsystem.local").first()
+    demo_user = User.query.filter(
+        (User.email == "user@example.com") | (User.username == "user")
+    ).first()
     if not demo_user:
-        demo_user = User(name="Demo Customer", username="customer", email="customer@foodsystem.local", role="customer")
-        demo_user.set_password("customer123")
+        demo_user = User(name="Demo User", username="user", email="user@example.com", role="customer")
         db.session.add(demo_user)
     else:
-        demo_user.username = "customer"
+        demo_user.name = "Demo User"
+        demo_user.username = "user"
+        demo_user.email = "user@example.com"
+        demo_user.role = "customer"
+    demo_user.set_password("user")
 
     db.session.commit()
     print("Seed completed. Demo admin: admin@foodsystem.local / admin123")
-    print("Demo customer: customer@foodsystem.local or customer / customer123")
+    print("Demo customer: user@example.com or user / user")
